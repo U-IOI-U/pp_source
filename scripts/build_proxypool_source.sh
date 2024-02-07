@@ -32,6 +32,7 @@ if [ -d "aa" ]; then
             echo ""
         } >> /workdir/pp_source.yaml
     done
+    rm -rf "aa"
 fi
 
 echo "[ pojiezhiyuanjun/2023 ]"
@@ -45,4 +46,19 @@ if [ -d "2023" ]; then
             echo ""
         } >> /workdir/pp_source.yaml
     done
+    rm -rf "2023"
+fi
+
+echo "[ changfengoss/pub ]"
+git_clone_repo "https://github.com/changfengoss/pub.git" "main" "pub"
+if [ -d "pub" ]; then
+    for i in `find pub/data/2024_* -name '*.yaml'`; do
+        {
+            echo "- type: clash"
+            echo "  options:"
+            echo "    url: https://github.com/changfengoss/pub/raw/main/$(echo $i | sed 's#pub/##')"
+            echo ""
+        } >> /workdir/pp_source.yaml
+    done
+    rm -rf "pub"
 fi
