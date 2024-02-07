@@ -1,5 +1,10 @@
 #!/bin/bash
 
+REPO_AUTHOR=""
+REPO_NAME=""
+REPO_BRANCH=""
+REPO_FOLDER=""
+
 function git_clone_repo()
 {
     local repo="${1:-}"
@@ -14,73 +19,196 @@ function git_clone_repo()
         git clone -q --depth=1 "$repo" $folder
     fi
     if [ "$?" != "0" ]; then
-        echo -e "Clone Repo [\033[32m ERR \033[0m] [ $folder <= $repo:$branch ]"
+        echo -e "Clone Repo [\033[31m ERR \033[0m] [ $folder <= $repo:$branch ]"
         rm -rf "$folder"
     else
-        echo -e "Clone Repo [\033[31m OK  \033[0m] [ $folder <= $repo:$branch ]"
+        echo -e "Clone Repo [\033[33m OK  \033[0m] [ $folder <= $repo:$branch ]"
     fi
 }
 
-echo "[ guoxin123/aa ]"
-git_clone_repo "https://github.com/guoxing123/aa.git" "main" "aa"
-if [ -d "aa" ]; then
-    for i in `find aa -name '*.yaml'`; do
-        {
-            echo "- type: clash"
-            echo "  options:"
-            echo "    url: https://github.com/guoxing123/aa/raw/main/$(basename $i)"
-            echo ""
-        } >> /workdir/pp_source.yaml
-    done
-    rm -rf "aa"
-fi
+function add_proxypool_source()
+{
+    local stype="${1:-}"
+    local src="${2:-}"
 
-echo "[ pojiezhiyuanjun/2023 ]"
-git_clone_repo "https://github.com/pojiezhiyuanjun/2023.git" "main" "2023"
-if [ -d "2023" ]; then
-    for i in `find 2023 -name '*.yml'`; do
-        {
-            echo "- type: clash"
-            echo "  options:"
-            echo "    url: https://github.com/pojiezhiyuanjun/2023/raw/main/$(basename $i)"
-            echo ""
-        } >> /workdir/pp_source.yaml
-    done
-    rm -rf "2023"
-fi
+    [ "$stype" != "" -a "$src" != "" ] || return
 
-echo "[ changfengoss/pub ]"
-git_clone_repo "https://github.com/changfengoss/pub.git" "main" "pub"
-if [ -d "pub" ]; then
-    for i in `find pub/data/2024_* -name '*.yaml'`; do
-        {
-            echo "- type: clash"
-            echo "  options:"
-            echo "    url: https://github.com/changfengoss/pub/raw/main/$(echo $i | sed 's#pub/##')"
-            echo ""
-        } >> /workdir/pp_source.yaml
-    done
-    rm -rf "pub"
-fi
+    case "$stype" in
+        clash|subscribe|webfuzzsub)
+            {
+                echo "- type: $stype"
+                echo "  options:"
+                echo "    url: $src"
+                echo ""
+            } >> /workdir/pp_source.yaml
+            ;;
+        tgchannel)
+            {
+                echo "- type: tgchannel"
+                echo "  options:"
+                echo "    channel: $i"
+                echo "    num: 100"
+                echo ""
+            } >> /workdir/pp_source.yaml
+            ;;
+        append)
+            {
+                cat "$src"
+                echo ""
+            } >> /workdir/pp_source.yaml
+            ;;
+    esac
+}
 
-echo "[ lee-alone/proxypool_source ]"
-git_clone_repo "https://github.com/lee-alone/proxypool_source.yaml.git" "main" "lee-alone"
-if [ -d "lee-alone" ]; then
-    if [ -f "lee-alone/source.yaml" ]; then
-        {
-            echo "- type: clash"
-            echo "  options:"
-            echo "    url: https://github.com/lee-alone/proxypool_source.yaml/raw/main/source.yaml"
-            echo ""
-        } >> /workdir/pp_source.yaml
+function add_proxypool_github_source()
+{
+    if [ -f "$REPO_FOLDER/$2" ]; then
+        if [ "$1" = "append" ]; then
+            add_proxypool_source "$1" "$REPO_FOLDER/$2"
+        else
+            add_proxypool_source "$1" "https://raw.githubusercontent.com/$REPO_AUTHOR/$REPO_NAME/$REPO_BRANCH/$2"
+        fi
     fi
-    if [ -f "lee-alone/diylist" ]; then
-        {
-            echo "- type: subscribe"
-            echo "  options:"
-            echo "    url: https://github.com/lee-alone/proxypool_source.yaml/raw/main/diylist"
-            echo ""
-        } >> /workdir/pp_source.yaml
-    fi
-    rm -rf "lee-alone"
+}
+
+REPO_AUTHOR="guoxing123"
+REPO_NAME="aa"
+REPO_BRANCH="main"
+REPO_FOLDER="aa"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    for i in `find $REPO_FOLDER -name '*.yaml'`; do
+        add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+    done
+    rm -rf "$REPO_FOLDER"
 fi
+
+
+REPO_AUTHOR="pojiezhiyuanjun"
+REPO_NAME="2023"
+REPO_BRANCH="main"
+REPO_FOLDER="2023"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    for i in `find $REPO_FOLDER -name '*.yml'`; do
+        add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+    done
+    rm -rf "$REPO_FOLDER"
+fi
+
+
+REPO_AUTHOR="changfengoss"
+REPO_NAME="pub"
+REPO_BRANCH="main"
+REPO_FOLDER="pub"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    for i in `find $REPO_FOLDER/data/2024_* -name '*.yaml'`; do
+        add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+    done
+    rm -rf "$REPO_FOLDER"
+fi
+
+
+REPO_AUTHOR="lee-alone"
+REPO_NAME="proxypool_source.yaml"
+REPO_BRANCH="main"
+REPO_FOLDER="lee-alone"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "append" "source.yaml"
+    add_proxypool_github_source "subscribe" "diylist"
+    rm -rf "$REPO_FOLDER"
+fi
+
+
+REPO_AUTHOR="snakem982"
+REPO_NAME="proxypool"
+REPO_BRANCH="main"
+REPO_FOLDER="proxypool"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "nodelist.txt"
+    add_proxypool_github_source "webfuzzsub" "proxies.txt"
+    add_proxypool_github_source "append" "webfuzz.yaml"
+    if [ -f "$REPO_FOLDER/tgchannel.json" ]; then
+        for i in `grep '"' $REPO_FOLDER/tgchannel.json | awk -F '"' '{print $2}'`; do
+            add_proxypool_source "tgchannel" "$i"
+        done
+    fi
+    rm -rf "$REPO_FOLDER"
+fi
+
+
+REPO_AUTHOR="zyjia"
+REPO_NAME="proxypool"
+REPO_BRANCH="main"
+REPO_FOLDER="proxypool"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "nodelist.txt"
+    add_proxypool_github_source "webfuzzsub" "proxies.txt"
+    add_proxypool_github_source "append" "webfuzz.yaml"
+    if [ -f "$REPO_FOLDER/tgchannel.json" ]; then
+        for i in `grep '"' $REPO_FOLDER/tgchannel.json | awk -F '"' '{print $2}'`; do
+            add_proxypool_source "tgchannel" "$i"
+        done
+    fi
+    rm -rf "$REPO_FOLDER"
+fi
+
+
+REPO_AUTHOR="xiaoqi33221"
+REPO_NAME="xiaoqi-Node-pools"
+REPO_BRANCH="main"
+REPO_FOLDER="proxypool"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "nodelist.txt"
+    add_proxypool_github_source "webfuzzsub" "proxies.txt"
+    add_proxypool_github_source "append" "webfuzz.yaml"
+    if [ -f "$REPO_FOLDER/tgchannel.json" ]; then
+        for i in `grep '"' $REPO_FOLDER/tgchannel.json | awk -F '"' '{print $2}'`; do
+            add_proxypool_source "tgchannel" "$i"
+        done
+    fi
+    add_proxypool_github_source "clash" "clash058fb.yaml"
+    rm -rf "$REPO_FOLDER"
+fi
+
+
+REPO_AUTHOR="hjchjchjc4352"
+REPO_NAME="proxypool"
+REPO_BRANCH="main"
+REPO_FOLDER="proxypool"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "nodelist.txt"
+    add_proxypool_github_source "webfuzzsub" "proxies.txt"
+    add_proxypool_github_source "append" "webfuzz.yaml"
+    if [ -f "$REPO_FOLDER/tgchannel.json" ]; then
+        for i in `grep '"' $REPO_FOLDER/tgchannel.json | awk -F '"' '{print $2}'`; do
+            add_proxypool_source "tgchannel" "$i"
+        done
+    fi
+    add_proxypool_github_source "clash" "clash.yaml"
+    add_proxypool_github_source "clash" "mihomo.yaml"
+    rm -rf "$REPO_FOLDER"
+fi
+
