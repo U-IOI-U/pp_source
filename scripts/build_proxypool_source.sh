@@ -33,3 +33,16 @@ if [ -d "aa" ]; then
         } >> /workdir/pp_source.yaml
     done
 fi
+
+echo "[ pojiezhiyuanjun/2023 ]"
+git_clone_repo "https://github.com/pojiezhiyuanjun/2023.git" "main" "2023"
+if [ -d "2023" ]; then
+    for i in `find 2023 -name '*.yml'`; do
+        {
+            echo "- type: clash"
+            echo "  options:"
+            echo "    url: https://github.com/pojiezhiyuanjun/2023/raw/main/$(basename $i)"
+            echo ""
+        } >> /workdir/pp_source.yaml
+    done
+fi
