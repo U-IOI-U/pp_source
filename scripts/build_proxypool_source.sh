@@ -62,3 +62,25 @@ if [ -d "pub" ]; then
     done
     rm -rf "pub"
 fi
+
+echo "[ lee-alone/proxypool_source ]"
+git_clone_repo "https://github.com/lee-alone/proxypool_source.yaml.git" "main" "lee-alone"
+if [ -d "lee-alone" ]; then
+    if [ -f "lee-alone/source.yaml" ]; then
+        {
+            echo "- type: clash"
+            echo "  options:"
+            echo "    url: https://github.com/lee-alone/proxypool_source.yaml/raw/main/source.yaml"
+            echo ""
+        } >> /workdir/pp_source.yaml
+    fi
+    if [ -f "lee-alone/diylist" ]; then
+        {
+            echo "- type: subscribe"
+            echo "  options:"
+            echo "    url: https://github.com/lee-alone/proxypool_source.yaml/raw/main/diylist"
+            echo ""
+        } >> /workdir/pp_source.yaml
+    fi
+    rm -rf "lee-alone"
+fi
