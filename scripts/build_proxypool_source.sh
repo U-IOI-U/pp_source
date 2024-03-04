@@ -265,3 +265,15 @@ if [ -d "$REPO_FOLDER" ]; then
     add_proxypool_github_source "subscribe" "Long_term_subscription_try"
     rm -rf "$REPO_FOLDER"
 fi
+
+REPO_AUTHOR="ermaozi"
+REPO_NAME="get_subscribe"
+REPO_BRANCH="main"
+REPO_FOLDER="get_subscribe"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "clash" "subscribe/clash.yml"
+    rm -rf "$REPO_FOLDER"
+fi
