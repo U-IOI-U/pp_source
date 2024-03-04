@@ -6,6 +6,8 @@ name: Build Proxypool Source
 # or API.
 on:
   workflow_dispatch:
+  push:
+    branches: [ dev ]
   schedule:
     - cron: 0 1 * * *
 

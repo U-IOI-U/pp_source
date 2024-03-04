@@ -13,7 +13,7 @@ function git_clone_repo()
 
     [ "$repo" != "" ] || return
 
-    if [ "$branch" != "" ]; then
+    if [ "$branch" != "" -a "$branch" != "main" ]; then
         git clone -q -b "$branch" --depth=1 "$repo" $folder
     else
         git clone -q --depth=1 "$repo" $folder
@@ -110,7 +110,11 @@ echo "[ $REPO_AUTHOR/$REPO_NAME ]"
 git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
 if [ -d "$REPO_FOLDER" ]; then
     for i in `find $REPO_FOLDER/data/2024_* -name '*.yaml'`; do
-        add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+        if [ `grep -c 'proxies:' $i` -ne 0 ]; then
+            add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+        elif [ `grep -c '{' $i` -eq 0 ]; then
+            add_proxypool_github_source "subscribe" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+        fi
     done
     rm -rf "$REPO_FOLDER"
 fi
@@ -212,3 +216,52 @@ if [ -d "$REPO_FOLDER" ]; then
     rm -rf "$REPO_FOLDER"
 fi
 
+REPO_AUTHOR="peasoft"
+REPO_NAME="NoMoreWalls"
+REPO_BRANCH="master"
+REPO_FOLDER="NoMoreWalls"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "clash" "list.yml"
+    add_proxypool_github_source "clash" "list.meta.yml"
+    rm -rf "$REPO_FOLDER"
+fi
+
+REPO_AUTHOR="mahdibland"
+REPO_NAME="V2RayAggregator"
+REPO_BRANCH="master"
+REPO_FOLDER="V2RayAggregator"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "clash" "Eternity.yml"
+    rm -rf "$REPO_FOLDER"
+fi
+
+REPO_AUTHOR="mfuu"
+REPO_NAME="v2ray"
+REPO_BRANCH="main"
+REPO_FOLDER="v2ray"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "clash" "clash.yaml"
+    rm -rf "$REPO_FOLDER"
+fi
+
+REPO_AUTHOR="w1770946466"
+REPO_NAME="Auto_proxy"
+REPO_BRANCH="main"
+REPO_FOLDER="Auto_proxy"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "subscribe" "Long_term_subscription_num"
+    add_proxypool_github_source "subscribe" "Long_term_subscription_try"
+    rm -rf "$REPO_FOLDER"
+fi
