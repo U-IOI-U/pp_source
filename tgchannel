@@ -1,0 +1,14 @@
+- type: tgchannel
+  options:
+    channel: freebaipiao
+    num: 30
+
+- type: tgchannel
+  options:
+    channel: v2ray666
+    num: 100
+
+- type: tgchannel
+  options:
+    channel: proxyshareCN
+    num: 10

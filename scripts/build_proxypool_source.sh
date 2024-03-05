@@ -46,7 +46,7 @@ function add_proxypool_source()
             {
                 echo "- type: tgchannel"
                 echo "  options:"
-                echo "    channel: $i"
+                echo "    channel: $src"
                 echo "    num: 100"
                 echo ""
             } >> /workdir/pp_source.yaml
