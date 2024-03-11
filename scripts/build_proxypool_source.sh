@@ -86,19 +86,19 @@ if [ -d "$REPO_FOLDER" ]; then
 fi
 
 
-REPO_AUTHOR="pojiezhiyuanjun"
-REPO_NAME="2023"
-REPO_BRANCH="main"
-REPO_FOLDER="2023"
+# REPO_AUTHOR="pojiezhiyuanjun"
+# REPO_NAME="2023"
+# REPO_BRANCH="main"
+# REPO_FOLDER="2023"
 
-echo "[ $REPO_AUTHOR/$REPO_NAME ]"
-git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
-if [ -d "$REPO_FOLDER" ]; then
-    for i in `find $REPO_FOLDER -name '*.yml'`; do
-        add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
-    done
-    rm -rf "$REPO_FOLDER"
-fi
+# echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+# git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+# if [ -d "$REPO_FOLDER" ]; then
+#     for i in `find $REPO_FOLDER -name '*.yml'`; do
+#         add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+#     done
+#     rm -rf "$REPO_FOLDER"
+# fi
 
 
 REPO_AUTHOR="changfengoss"
