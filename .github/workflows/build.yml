@@ -48,7 +48,7 @@ jobs:
 
     - name: Get Proxies
       run: |
-        base ./scripts/save_proxypool_proxies.sh
+        bash ./scripts/save_proxypool_proxies.sh
 
     - name: Upload file to Release
       uses: ncipollo/release-action@main
