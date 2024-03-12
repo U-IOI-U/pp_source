@@ -33,6 +33,8 @@ function add_proxypool_source()
 
     [ "$stype" != "" -a "$src" != "" ] || return
 
+    echo "[ $stype <= $src ]"
+
     case "$stype" in
         clash|subscribe|webfuzzsub)
             {
@@ -79,8 +81,10 @@ REPO_FOLDER="aa"
 echo "[ $REPO_AUTHOR/$REPO_NAME ]"
 git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
 if [ -d "$REPO_FOLDER" ]; then
-    for i in `find $REPO_FOLDER -name '*.yaml'`; do
-        add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+    for _date in `date +%Y%m%d` `date --date="1 days ago" +%Y%m%d`; do
+        for i in `find $REPO_FOLDER -name "kjwl$_date"'*.yaml' 2>/dev/null`; do
+            add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+        done
     done
     rm -rf "$REPO_FOLDER"
 fi
@@ -109,12 +113,14 @@ REPO_FOLDER="pub"
 echo "[ $REPO_AUTHOR/$REPO_NAME ]"
 git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
 if [ -d "$REPO_FOLDER" ]; then
-    for i in `find $REPO_FOLDER/data/2024_* -name '*.yaml'`; do
-        if [ `grep -c 'proxies:' $i` -ne 0 ]; then
-            add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
-        elif [ `grep -c '{' $i` -eq 0 ]; then
-            add_proxypool_github_source "subscribe" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
-        fi
+    for _date in `date +%Y_%m_%d` `date --date="1 days ago" +%Y_%m_%d`; do
+        for i in `find $REPO_FOLDER/data/${_date} -name '*.yaml' 2>/dev/null`; do
+            if [ `grep -c 'proxies:' $i` -ne 0 ]; then
+                add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+            elif [ `grep -c '{' $i` -eq 0 ]; then
+                add_proxypool_github_source "subscribe" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+            fi
+        done
     done
     rm -rf "$REPO_FOLDER"
 fi
