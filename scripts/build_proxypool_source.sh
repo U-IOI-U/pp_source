@@ -78,16 +78,16 @@ REPO_NAME="aa"
 REPO_BRANCH="main"
 REPO_FOLDER="aa"
 
-echo "[ $REPO_AUTHOR/$REPO_NAME ]"
-git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
-if [ -d "$REPO_FOLDER" ]; then
-    for _date in `date +%Y%m%d` `date --date="1 days ago" +%Y%m%d`; do
-        for i in `find $REPO_FOLDER -name "kjwl$_date"'*.yaml' 2>/dev/null`; do
-            add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
-        done
-    done
-    rm -rf "$REPO_FOLDER"
-fi
+# echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+# git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+# if [ -d "$REPO_FOLDER" ]; then
+#     for _date in `date +%Y%m%d` `date --date="1 days ago" +%Y%m%d`; do
+#         for i in `find $REPO_FOLDER -name "kjwl$_date"'*.yaml' 2>/dev/null`; do
+#             add_proxypool_github_source "clash" "$(echo $i | sed 's#'$REPO_FOLDER'/##')"
+#         done
+#     done
+#     rm -rf "$REPO_FOLDER"
+# fi
 
 
 # REPO_AUTHOR="pojiezhiyuanjun"
