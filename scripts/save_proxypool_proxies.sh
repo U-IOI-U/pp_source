@@ -90,6 +90,9 @@ while [ true ]; do
         echo ""
     } >> ./source.yaml
 
+    ## fix format error
+    sed -i 's/^ options:/  options:/g' source.yaml
+
     ./proxypool-linux-amd64 -c config.yaml -d | tee output.txt
 
     if [ -f 'output.txt' ]; then
@@ -105,8 +108,9 @@ while [ true ]; do
         fi
     fi
 
-    if [ -f 'proxies_all' ]; then
-        mv proxies proxies_all webfuzzsub_auto /workdir/
-    fi
+    [ -f 'proxies_all' -a -f 'proxies' ] || exit 1
+    [ `stat -c "%s" proxies_all` -gt 0 ] || exit 1
+
+    mv proxies proxies_all webfuzzsub_auto /workdir/
     break
 done
