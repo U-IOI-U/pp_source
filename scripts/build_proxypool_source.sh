@@ -283,3 +283,39 @@ if [ -d "$REPO_FOLDER" ]; then
     add_proxypool_github_source "clash" "subscribe/clash.yml"
     rm -rf "$REPO_FOLDER"
 fi
+
+REPO_AUTHOR="ebrasha"
+REPO_NAME="free-v2ray-public-list"
+REPO_BRANCH="main"
+REPO_FOLDER="free-v2ray-public-list"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "V2Ray-Config-By-EbraSha-All-Type.txt"
+    rm -rf "$REPO_FOLDER"
+fi
+
+REPO_AUTHOR="Epodonios"
+REPO_NAME="v2ray-configs"
+REPO_BRANCH="main"
+REPO_FOLDER="v2ray-configs"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "All_Configs_Sub.txt"
+    rm -rf "$REPO_FOLDER"
+fi
+
+REPO_AUTHOR="MatinGhanbari"
+REPO_NAME="v2ray-configs"
+REPO_BRANCH="main"
+REPO_FOLDER="v2ray-configs"
+
+echo "[ $REPO_AUTHOR/$REPO_NAME ]"
+git_clone_repo "https://github.com/$REPO_AUTHOR/$REPO_NAME.git" "$REPO_BRANCH" "$REPO_FOLDER"
+if [ -d "$REPO_FOLDER" ]; then
+    add_proxypool_github_source "webfuzzsub" "subscriptions/v2ray/all_sub.txt"
+    rm -rf "$REPO_FOLDER"
+fi
